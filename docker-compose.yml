@@ -1,0 +1,115 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: media_monitor_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: media_monitor
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mediamonitor2024}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=ar_SA.UTF-8"
+      TZ: Asia/Riyadh
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d media_monitor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - media_monitor_network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: media_monitor_redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --save 60 1000
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - media_monitor_network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: media_monitor_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-mediamonitor2024}@db:5432/media_monitor
+      DATABASE_URL_SYNC: postgresql://postgres:${POSTGRES_PASSWORD:-mediamonitor2024}@db:5432/media_monitor
+      REDIS_URL: redis://redis:6379
+      DEBUG: "false"
+      SECRET_KEY: ${SECRET_KEY:-change-this-secret-key-in-production}
+      RSS_FETCH_INTERVAL: "300"
+      CRISIS_THRESHOLD: "0.75"
+      ALLOWED_ORIGINS: '["http://localhost:3000","http://localhost:80","http://frontend"]'
+      TZ: Asia/Riyadh
+    volumes:
+      - ./backend:/app
+      - backend_cache:/app/cache
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - media_monitor_network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: media_monitor_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - media_monitor_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_cache:
+    driver: local
+
+networks:
+  media_monitor_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

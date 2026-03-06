@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3:*)",
+      "Bash(docker:*)",
+      "Bash(/usr/local/bin/python3.11:*)",
+      "Bash(brew install:*)",
+      "Bash($PY:*)",
+      "Bash(source:*)",
+      "Bash(brew services list)",
+      "Bash(chmod +x:*)",
+      "Bash(node:*)",
+      "Bash(brew list:*)",
+      "Bash(wait 89537:*)",
+      "Bash(curl:*)",
+      "Bash(ps:*)",
+      "Bash(/usr/local/opt/postgresql@15/bin/initdb:*)",
+      "Bash(/usr/local/opt/redis/bin/redis-server:*)",
+      "Bash(brew:*)",
+      "Bash(npm install:*)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(\"$PG_BIN/postgres\":*)",
+      "Bash(\"$PG_BIN/pg_ctl\":*)",
+      "Bash(python3.11:*)",
+      "Bash(pkill:*)",
+      "Bash(open:*)",
+      "Bash(/Users/mac/media-monitor/backend/venv/bin/uvicorn app.main:app:*)",
+      "Bash(/Users/mac/media-monitor/backend/venv/bin/python3:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(npm:*)",
+      "Bash(/Users/mac/media-monitor/frontend/index.html:*)"
+    ]
+  }
+}
