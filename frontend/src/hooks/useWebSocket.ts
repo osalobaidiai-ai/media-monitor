@@ -3,7 +3,7 @@ import { useAppStore } from '../store'
 import type { WebSocketMessage } from '../types'
 import toast from 'react-hot-toast'
 
-const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws`
+const WS_URL = `${import.meta.env.VITE_API_URL?.replace("https://", "wss://").replace("http://", "ws://")}/ws`
 const RECONNECT_DELAY = 3000
 const MAX_RECONNECT_ATTEMPTS = 10
 
