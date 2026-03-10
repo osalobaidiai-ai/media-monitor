@@ -58,7 +58,7 @@ const CustomLegend = ({ payload }: { payload?: { value: string; color: string }[
 }
 
 export const SentimentChart = ({ stats }: SentimentChartProps) => {
-  const pieData = Object.entries(stats.sentiment_distribution).map(([key, value]) => ({
+  const pieData = Object.entries(stats.sentiment_distribution || {}).map(([key, value]) => ({
     name: SENTIMENT_LABELS[key] || key,
     value,
     color: SENTIMENT_COLORS[key as keyof typeof SENTIMENT_COLORS] || '#5a7a9a',

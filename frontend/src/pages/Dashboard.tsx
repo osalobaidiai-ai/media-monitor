@@ -171,7 +171,7 @@ export const Dashboard = () => {
 
               {stats?.crisis_types && Object.keys(stats.crisis_types).length > 0 ? (
                 <div className="space-y-3.5">
-                  {Object.entries(stats.crisis_types).map(([type, count]) => {
+                  {Object.entries(stats.crisis_types || {}).map(([type, count]) => {
                     const max = Math.max(...Object.values(stats.crisis_types))
                     const pct = (count / max) * 100
                     const color = CRISIS_COLORS[type] ?? '#ff4d6d'

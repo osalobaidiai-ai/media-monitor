@@ -149,7 +149,7 @@ export const CrisisAlertBanner = () => {
 
                 {/* Severity breakdown */}
                 <div className="flex items-center gap-3 mt-2 flex-wrap">
-                  {Object.entries(summary.by_severity)
+                  {Object.entries(summary.by_severity || {})
                     .filter(([, v]) => v > 0)
                     .map(([k, v]) => {
                       const s = SEVERITY_STYLES[k] ?? SEVERITY_STYLES.low

@@ -71,7 +71,7 @@ export const Analytics = () => {
   })
 
   const sentimentData = stats
-    ? Object.entries(stats.sentiment_distribution).map(([k, v]) => ({
+    ? Object.entries(stats.sentiment_distribution || {}).map(([k, v]) => ({
         name: k === 'positive' ? 'إيجابي' : k === 'negative' ? 'سلبي' : 'محايد',
         value: v,
         color: SENTIMENT_SOC[k as keyof typeof SENTIMENT_SOC] ?? '#5a7a9a',
@@ -79,7 +79,7 @@ export const Analytics = () => {
     : []
 
   const crisisData = stats
-    ? Object.entries(stats.crisis_types).map(([k, v]) => ({
+    ? Object.entries(stats.crisis_types || {}).map(([k, v]) => ({
         name: k === 'security' ? 'أمني' : k === 'political' ? 'سياسي'
             : k === 'economic' ? 'اقتصادي' : k === 'health' ? 'صحي' : 'طبيعي',
         count: v,
