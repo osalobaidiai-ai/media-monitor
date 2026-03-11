@@ -18,3 +18,5 @@ anthropic>=0.25.0
 python-dateutil==2.9.0
 arabic-reshaper==3.0.0
 python-bidi==0.4.2
+psycopg2-binary
+asyncpg
