@@ -49,3 +49,4 @@ logs/
 backend/cache/
 __pycache__/
 .pytest_cache/
+backend/.env
