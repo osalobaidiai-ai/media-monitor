@@ -10,7 +10,11 @@ if db_url.startswith("postgresql://"):
 _is_sqlite = db_url.startswith("sqlite")
 _engine_kwargs = {"echo": settings.DEBUG}
 if not _is_sqlite:
-    _engine_kwargs.update({"pool_size": 10, "max_overflow": 20})
+    _engine_kwargs.update({
+        "pool_size": 5,
+        "max_overflow": 10,
+        "connect_args": {"ssl": "require"}
+    })
 
 engine = create_async_engine(db_url, **_engine_kwargs)
 
